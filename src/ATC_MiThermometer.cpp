@@ -190,6 +190,30 @@ unsigned ATC_MiThermometer::getData(uint32_t scanTime)
                     // Battery state [%]
                     data[n].batt_level = foundDevices.getDevice(i)->getServiceData().c_str()[9];
                 }
+				else if (len == 14) // add THB2 sensor read
+                {
+                    log_d("THB2 format");
+
+                    // Temperature
+                    int temp_lsb = foundDevices.getDevice(i)->getServiceData().c_str()[7];
+                    int temp_msb = foundDevices.getDevice(i)->getServiceData().c_str()[6];
+                    data[n].temperature = (temp_msb & 0xff) | (temp_lsb & 0xff) << 8;
+                    //data[n].temperature /= 100;
+
+                    // Humidity
+                    int temp_humidity_lsb = foundDevices.getDevice(i)->getServiceData().c_str()[10];
+					int temp_humidity_msb = foundDevices.getDevice(i)->getServiceData().c_str()[9];
+					data[n].humidity = (temp_humidity_msb & 0xff) | (temp_humidity_lsb & 0xff) << 8;
+                    //data[n].humidity /= 100;
+
+                    // Battery voltage
+                    int volt_lsb = foundDevices.getDevice(i)->getServiceData().c_str()[13];
+                    int volt_msb = foundDevices.getDevice(i)->getServiceData().c_str()[12];
+                    data[n].batt_voltage = (volt_msb & 0xff) | (volt_lsb & 0xff) << 8;
+
+                    // Battery state [%]
+                    data[n].batt_level = foundDevices.getDevice(i)->getServiceData().c_str()[4];
+                }
                 else
                 {
                     log_d("Unknown ServiceData format");
